@@ -1,0 +1,29 @@
+reimap — recommended GitHub repository topics (English)
+
+Add these under: GitHub repo → About (gear icon) → Topics.
+GitHub allows up to 20 topics; the list below is exactly 20, ordered by value.
+
+network-visualization
+network-monitor
+network-security
+geoip
+sockets
+observability
+security-tools
+privacy
+local-first
+no-telemetry
+real-time
+world-map
+dashboard
+plotly
+dash
+python
+cross-platform
+android
+plugin-system
+hooks
+
+Suggested repository description:
+Local-first, real-time network map — watch your machine connect across the world.
+Animated offline map, 21-hook plugin system, Windows/macOS/Linux/Android. MIT.
