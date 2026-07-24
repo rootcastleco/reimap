@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ri_bg">#0B1021</color>
+    <color name="ri_panel">#121A35</color>
+    <color name="ri_accent">#4F8CFF</color>
+    <color name="ri_accent2">#00D3A7</color>
+    <color name="ri_text">#E6ECFF</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

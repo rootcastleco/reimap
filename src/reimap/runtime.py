@@ -35,8 +35,9 @@ log = get_logger("runtime")
 class Runtime:
     """Owns background scanning and exposes state to the UI."""
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, *, demo: bool = False) -> None:
         self.config = config
+        self.demo = demo
         self.scanner = get_scanner()
         self.geoip_db = GeoIPDatabase()
         self.resolver = GeoResolver(self.geoip_db)
@@ -55,7 +56,15 @@ class Runtime:
 
     # -- Lifecycle ----------------------------------------------------------
     def start(self) -> None:
-        """Start the background scan loop (idempotent)."""
+        """Start the background scan loop, or seed demo data in demo mode."""
+        if self.demo:
+            from .demo import seed
+
+            seed(self.store, self.history)
+            snapshot = self.insights.compute()
+            self._latest_snapshot = snapshot.as_dict()
+            log.info("Demo mode: seeded %d sample connections.", self.store.stats()["total"])
+            return
         if self._thread and self._thread.is_alive():
             return
         self._stop.clear()

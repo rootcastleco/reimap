@@ -285,6 +285,17 @@ def about_panel() -> html.Div:
                     " project.",
                 ]
             ),
+            html.H4("Standards & compliance"),
+            html.Ul(
+                [
+                    html.Li("Documented to a tailored MIL-STD-498 set (SRS, SDD, STD, SVD, SDP, RTM)."),
+                    html.Li("Coded to an adapted NASA/JPL 'Power of 10' safety-critical standard."),
+                    html.Li("Fail-soft: no plugin or hook can crash a scan or the server."),
+                    html.Li("Verified by an automated test suite on Python 3.10–3.12 in CI."),
+                ]
+            ),
+            html.H4("Runs on"),
+            html.P("Windows · macOS · Linux · Android — plus a fully offline demo."),
             html.P("Licensed under the MIT License."),
         ]
     )

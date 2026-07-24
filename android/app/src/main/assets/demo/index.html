@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>reimap — live network map</title>
+<style>
+  :root{
+    --bg:#0b1021; --panel:#121a35; --panel2:#1a2547; --text:#e6ecff; --muted:#8ea0d0;
+    --accent:#4f8cff; --accent2:#00d3a7; --land:#1c2748;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:var(--bg);color:var(--text);
+    font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;overflow:hidden}
+  #map{position:fixed;inset:0;display:block}
+  .bar{position:fixed;left:0;right:0;z-index:5;pointer-events:none}
+  .top{top:0;height:52px;display:flex;align-items:center;gap:14px;padding:0 16px;
+    background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,0))}
+  .brand{font-weight:800;letter-spacing:.5px;font-size:18px}
+  .brand span{color:var(--accent)}
+  .stats{display:flex;gap:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .stats b{color:var(--text)}
+  .bottom{bottom:0;height:40px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 16px;background:linear-gradient(0deg,rgba(0,0,0,.6),rgba(0,0,0,0));font-size:11px;color:var(--muted)}
+  .bottom a{color:var(--accent);text-decoration:none;pointer-events:auto}
+  .badge{position:fixed;top:60px;left:16px;z-index:5;background:rgba(18,26,53,.7);
+    border:1px solid var(--panel2);border-radius:10px;padding:6px 10px;font-size:11px;color:var(--muted);
+    backdrop-filter:blur(6px)}
+  .badge b{color:var(--accent2)}
+</style>
+</head>
+<body>
+<canvas id="map"></canvas>
+<div class="bar top">
+  <div class="brand"><span>rei</span>map</div>
+  <div class="stats" id="stats"></div>
+</div>
+<div class="badge">Offline demo · <b>no server needed</b></div>
+<div class="bar bottom">
+  <div>reimap — local-first network map</div>
+  <div><a href="https://batuhanayribas.com" target="_blank">batuhanayribas.com</a> ·
+       <a href="https://rootcastle.com" target="_blank">rootcastle.com</a></div>
+</div>
+<script src="demo-data.js"></script>
+<script src="map.js"></script>
+</body>
+</html>

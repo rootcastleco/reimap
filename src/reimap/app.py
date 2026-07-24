@@ -34,9 +34,11 @@ def create_app(config: Config, runtime: Runtime):
     import dash
 
     from .plugins import PluginManager
+    from .ui.animation import register_animation
     from .ui.callbacks import register_callbacks
-    from .ui.layout import build_layout
+    from .ui.layout import build_layout, theme_css
     from .ui.shortcuts import register_shortcuts
+    from .ui.theme import get_palette
 
     # Load plugins before the first layout build so UI hooks are registered.
     plugin_manager = PluginManager(hooks, runtime)
@@ -50,10 +52,30 @@ def create_app(config: Config, runtime: Runtime):
         suppress_callback_exceptions=True,
     )
 
+    # Inject the theme stylesheet into the page <head>. The theme is fixed per
+    # session (the Settings panel asks the user to reload to change it), so a
+    # single injected <style> block is both correct and cache-friendly.
+    css = theme_css(get_palette(config.theme))
+    app.index_string = f"""<!DOCTYPE html>
+<html>
+  <head>
+    {{%metas%}}
+    <title>{{%title%}}</title>
+    {{%favicon%}}
+    {{%css%}}
+    <style>{css}</style>
+  </head>
+  <body>
+    {{%app_entry%}}
+    <footer>{{%config%}}{{%scripts%}}{{%renderer%}}</footer>
+  </body>
+</html>"""
+
     app.layout = lambda: build_layout(config, runtime.store.stats())
 
     register_callbacks(app, runtime, plugin_manager)
     register_shortcuts(app)
+    register_animation(app)
 
     return app, plugin_manager
 
@@ -72,6 +94,11 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--theme", help="UI theme (midnight, aurora, carbon, daylight, terminal).")
     parser.add_argument("--interval", type=float, help="Scan interval in seconds.")
     parser.add_argument("--no-browser", action="store_true", help="Do not open a browser on start.")
+    parser.add_argument(
+        "--demo",
+        action="store_true",
+        help="Seed curated sample data instead of scanning real sockets (no GeoIP needed).",
+    )
     parser.add_argument("--list-hooks", action="store_true", help="Print all hook names and exit.")
     parser.add_argument("--debug", action="store_true", help="Enable Dash debug mode.")
     parser.add_argument("--version", action="version", version=f"reimap {__version__}")
@@ -106,7 +133,7 @@ def main(argv: list[str] | None = None) -> int:
     _apply_overrides(config, args)
     hooks.emit(HookName.CONFIG_LOADED, config=config)
 
-    runtime = Runtime(config)
+    runtime = Runtime(config, demo=args.demo)
     hooks.emit(HookName.APP_STARTING, config=config)
 
     app, _plugins = create_app(config, runtime)

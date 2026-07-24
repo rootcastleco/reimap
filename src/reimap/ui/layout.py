@@ -12,7 +12,6 @@ from dash import dcc, html
 
 from ..config import Config
 from ..hooks import HookName, hooks
-from .theme import get_palette
 
 # Menu rail: (panel id, glyph, label, keyboard key).
 MENU_ITEMS = [
@@ -29,8 +28,8 @@ MENU_ITEMS = [
 ]
 
 
-def _css(palette: dict[str, str]) -> str:
-    """Return the injected stylesheet with theme variables substituted."""
+def theme_css(palette: dict[str, str]) -> str:
+    """Return the stylesheet for ``palette`` (injected into the page ``<head>``)."""
     variables = "\n".join(f"  --ri-{k}: {v};" for k, v in palette.items())
     return f""":root {{
 {variables}
@@ -102,9 +101,11 @@ label {{ font-size: 12px; color: var(--ri-muted); display: block; margin-top: 8p
 
 
 def build_layout(config: Config, stats: dict) -> html.Div:
-    """Build and return the root layout component."""
-    palette = get_palette(config.theme)
+    """Build and return the root layout component.
 
+    The theme stylesheet is injected separately into the page ``<head>`` via
+    :func:`theme_css`; this function only builds the component tree.
+    """
     topbar = html.Div(
         className="ri-topbar",
         children=[
@@ -158,12 +159,27 @@ def build_layout(config: Config, stats: dict) -> html.Div:
         children=[
             dcc.Store(id="ri-active-panel", data=None),
             dcc.Store(id="ri-focus-country", data=None),
+            dcc.Store(id="ri-anim-sink", data=None),
             dcc.Interval(id="ri-tick", interval=config.auto_refresh_ms, n_intervals=0),
             dcc.Interval(id="ri-panel-tick", interval=max(2000, config.auto_refresh_ms), n_intervals=0),
+            dcc.Interval(
+                id="ri-anim",
+                interval=config.animation_ms,
+                n_intervals=0,
+                disabled=not config.animate,
+            ),
             html.Div(id="ri-keyboard", tabIndex="0"),
             dcc.Graph(
                 id="ri-map",
-                config={"scrollZoom": True, "displayModeBar": False, "responsive": True},
+                # topojsonURL points Plotly at the world map data bundled in the
+                # package assets, so the map renders fully offline with no CDN
+                # request — in keeping with reimap's local-first, telemetry-free design.
+                config={
+                    "scrollZoom": True,
+                    "displayModeBar": False,
+                    "responsive": True,
+                    "topojsonURL": "/assets/",
+                },
                 style={"height": "100%", "width": "100%"},
             ),
             topbar,
@@ -175,7 +191,7 @@ def build_layout(config: Config, stats: dict) -> html.Div:
     )
 
     hooks.emit(HookName.UI_LAYOUT_BUILT, root=root, config=config)
-    return html.Div([html.Style(_css(palette)), root])
+    return root
 
 
 def _stat_children(stats: dict) -> list:

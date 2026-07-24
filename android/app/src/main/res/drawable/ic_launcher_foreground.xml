@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- reimap launcher foreground: a stylised globe with a location pin.
+     Drawn within the 108x108 adaptive-icon canvas; content kept inside the
+     central 72x72 safe zone. Original artwork. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Globe disc -->
+    <path
+        android:fillColor="#162044"
+        android:pathData="M54,30 m-24,0 a24,24 0 1,0 48,0 a24,24 0 1,0 -48,0" />
+    <!-- Equator -->
+    <path
+        android:strokeColor="#4F8CFF"
+        android:strokeWidth="1.6"
+        android:fillColor="#00000000"
+        android:pathData="M30,54 L78,54" />
+    <!-- Parallels -->
+    <path
+        android:strokeColor="#33477F"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M33.5,42 L74.5,42 M33.5,66 L74.5,66" />
+    <!-- Meridians -->
+    <path
+        android:strokeColor="#33477F"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M54,30 L54,78 M42,32 C36,44 36,64 42,76 M66,32 C72,44 72,64 66,76" />
+    <!-- Globe outline -->
+    <path
+        android:strokeColor="#4F8CFF"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:pathData="M54,30 m-24,0 a24,24 0 1,0 48,0 a24,24 0 1,0 -48,0" />
+
+    <!-- Location pin -->
+    <path
+        android:fillColor="#00D3A7"
+        android:pathData="M62,58 C62,51.9 57.1,47 51,47 C44.9,47 40,51.9 40,58 C40,66.2 51,79 51,79 C51,79 62,66.2 62,58 Z" />
+    <path
+        android:fillColor="#0B1021"
+        android:pathData="M51,54 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+</vector>

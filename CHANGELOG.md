@@ -26,9 +26,21 @@ Initial public release.
 - **Network inspection panels**: Unmapped services, LAN/Local, and Open ports.
 - **GeoIP management** — download/verify a MaxMind GeoLite2-City database from the
   UI, or install a file manually.
+- **Animated map** — great-circle arcs radiating from a configurable home origin,
+  packets travelling along each arc, and client-side pulsing markers.
+- **Fully offline rendering** — world geometry bundled; the map issues no external
+  request.
 - **Five UI themes** (`midnight`, `aurora`, `carbon`, `daylight`, `terminal`) and
   five map projections, with adjustable marker size and an optional density halo.
+- **`--demo` mode** — seed a curated worldwide dataset with no GeoIP required.
 - **Keyboard-first UI** — every panel one keypress away, handled client-side.
+- **Android application** (`android/`) — Kotlin WebView host with a standalone
+  offline demo (canvas world map, no server) and a connect-to-server mode.
+- **Desktop packaging** — PyInstaller spec and a release workflow that builds
+  Windows/macOS/Linux binaries and the Android APK and attaches them to releases.
+- **MIL-STD-498 documentation set** (`docs/mil-std-498/`) — SRS, SDD, STD, SDP, SVD
+  and a requirements traceability matrix.
+- **NASA/JPL "Power of 10"** adapted coding standard, enforced by review and CI.
 - **CLI** with `--host/--port/--theme/--interval/--no-browser/--list-hooks/--debug`.
 - **Cross-platform scanning** via a `psutil` primary backend and an `lsof`
   fallback.

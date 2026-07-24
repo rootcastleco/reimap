@@ -1,16 +1,35 @@
-# reimap
+<h1 align="center">reimap</h1>
 
-**Watch your machine reach across the internet — in real time.**
+<p align="center"><b>Watch your machine reach across the internet — in real time.</b></p>
+
+<p align="center">
+  <a href="#platforms">Windows · macOS · Linux · Android</a> ·
+  local-first · no telemetry · extensible via 21 hooks
+</p>
+
+<p align="center">
+  <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-00d3a7.svg">
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-4f8cff.svg">
+  <img alt="Platforms" src="https://img.shields.io/badge/Platforms-Win%20%7C%20macOS%20%7C%20Linux%20%7C%20Android-4f8cff.svg">
+  <img alt="Hooks" src="https://img.shields.io/badge/Hooks-21-00d3a7.svg">
+  <img alt="MIL-STD-498" src="https://img.shields.io/badge/Docs-MIL--STD--498-8ea0d0.svg">
+  <img alt="NASA Power of 10" src="https://img.shields.io/badge/Coding-NASA%20Power%20of%2010-8ea0d0.svg">
+</p>
+
+<p align="center">
+  <img src="docs/images/hero-map.png" alt="reimap live network map" width="100%">
+</p>
 
 `reimap` is a local-first network observability tool. It watches the sockets your
 computer opens, enriches every remote endpoint with geolocation data, and paints
-them onto a live, interactive world map. Everything runs on your own device: there
+them onto a live, animated world map. Everything runs on your own device: there
 is **no telemetry**, no account, and nothing about your traffic ever leaves your
 machine.
 
 Where a plain connection list tells you *that* your machine is talking to
-`140.82.113.25`, reimap shows you *who*, *where*, and *how often* — and lets you
-extend every part of that pipeline through a first-class **hook system**.
+`140.82.113.25`, reimap shows you *who*, *where*, and *how often* — with animated
+great-circle arcs radiating from your device — and lets you extend every part of
+that pipeline through a first-class **hook system**.
 
 > Built by [Batuhan Ayrıbaş](https://batuhanayribas.com) — a
 > [Rootcastle](https://rootcastle.com) project. Licensed under the MIT License.
@@ -21,14 +40,17 @@ extend every part of that pipeline through a first-class **hook system**.
 
 - [Why reimap](#why-reimap)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [How it works](#how-it-works)
 - [Installation](#installation)
 - [Quick start](#quick-start)
+- [Platforms](#platforms)
 - [The interface](#the-interface)
 - [Keyboard shortcuts](#keyboard-shortcuts)
 - [GeoIP setup](#geoip-setup)
 - [The hook system](#the-hook-system)
 - [Writing a plugin](#writing-a-plugin)
+- [Standards & compliance](#standards--compliance)
 - [Configuration](#configuration)
 - [Command-line usage](#command-line-usage)
 - [Development](#development)
@@ -55,7 +77,8 @@ invisible activity legible:
 
 | Area | What you get |
 | --- | --- |
-| **Live map** | Real-time world map with per-connection markers, five colour themes, five map projections, adjustable marker size and a density halo. |
+| **Animated live map** | Real-time world map with animated great-circle arcs radiating from your device, travelling packets, pulsing markers, a home origin, five colour themes, five projections, and a density halo. |
+| **Fully offline** | The world geometry is bundled — the map draws with **zero external requests**. |
 | **Insights** | New endpoints, frequent talkers, top countries, and top applications, recomputed every cycle. |
 | **History** | A persisted rolling window (default 30 days) with per-endpoint hit counts, first/last-seen, and country totals. |
 | **Daily report** | A compact summary of application patterns, provider/country concentration and busiest endpoints. |
@@ -64,7 +87,28 @@ invisible activity legible:
 | **Hook system** | 21 documented extension points across the whole lifecycle — plus a live in-app **hook inspector**. |
 | **Plugins** | Five built-in plugins and drop-in loading of your own from the config directory. |
 | **Keyboard-first UI** | Every panel is one keypress away. |
-| **Cross-platform** | Linux, Windows and macOS (with a `psutil` primary backend and an `lsof` fallback). |
+| **Runs everywhere** | Windows, macOS, Linux **and Android** — with a standalone offline demo APK. |
+| **Engineered to standards** | Documented to a tailored **MIL-STD-498** set; coded to an adapted **NASA/JPL Power of 10** standard; tested in CI on Python 3.10–3.12. |
+
+## Screenshots
+
+| Insights | Plugins & Hooks (live inspector) |
+| --- | --- |
+| ![Insights panel](docs/images/panel-insights.png) | ![Plugins and Hooks panel](docs/images/panel-plugins.png) |
+
+| Daily report | History |
+| --- | --- |
+| ![Daily report](docs/images/panel-report.png) | ![History](docs/images/panel-history.png) |
+
+| Aurora theme | Terminal theme |
+| --- | --- |
+| ![Aurora theme](docs/images/theme-aurora.png) | ![Terminal theme](docs/images/theme-terminal.png) |
+
+**Android — standalone offline demo (no server, no network):**
+
+<p align="center">
+  <img src="docs/images/android-demo.png" alt="reimap Android offline demo" width="320">
+</p>
 
 ## How it works
 
@@ -110,6 +154,28 @@ below) to place them on the map.
 ```bash
 reimap --theme aurora --port 9000 --no-browser
 ```
+
+**No GeoIP database yet? See it populated instantly with the built-in demo:**
+
+```bash
+reimap --demo          # seeds a curated worldwide dataset, no GeoIP needed
+```
+
+## Platforms
+
+reimap runs everywhere, with official builds produced by CI.
+
+| Platform | How to get it |
+| --- | --- |
+| **Linux / macOS / Windows (pip)** | `pip install -e .` then `reimap`. Python 3.10+. |
+| **Desktop binary** | Single-folder app built by the [release workflow](.github/workflows/release.yml) via PyInstaller — attached to each GitHub Release for all three OSes. No Python needed. |
+| **Docker** | `docker build -t reimap . && docker run --rm --network host --pid host reimap` (Linux host). |
+| **Android** | A Kotlin WebView app in [`android/`](android/README.md). Ships a **standalone offline demo** (no server) plus a **connect-to-server** mode. The APK is built by CI and attached to releases. |
+
+> **Architecture note.** On Android the privileged socket scanning runs on the
+> desktop/server engine (Python); the phone renders — either the bundled offline
+> demo, or a live desktop instance you point it at. This keeps the APK tiny and
+> permission-light.
 
 ## The interface
 
@@ -205,6 +271,26 @@ reimap ships five built-in plugins you can copy as starting points:
 | `jsonl_exporter` | Appends every scan to an audit `scans.jsonl` | `scan.completed` |
 
 Enable plugins via the `enabled_plugins` list in the config file.
+
+## Standards & compliance
+
+reimap is engineered to the discipline of a controlled software project, not just
+"an app that works." Two industry standards are applied — and documented — in full:
+
+- **MIL-STD-498** (*Software Development and Documentation*). A tailored
+  documentation set lives in [`docs/mil-std-498/`](docs/mil-std-498/): a
+  Requirements Specification (SRS) with numbered requirements, a Design Description
+  (SDD), a Test Description (STD), a Development Plan (SDP), a Version Description
+  (SVD), and a bidirectional **Requirements Traceability Matrix** (RTM) linking
+  every requirement → design element → verifying test.
+- **NASA/JPL "Power of 10"** rules for safety-critical code, adapted to Python
+  ([`docs/mil-std-498/coding-standard.md`](docs/mil-std-498/coding-standard.md)):
+  bounded loops, boundary assertions, checked return values, minimal-scope state,
+  and a project-specific **fail-soft** rule — *no plugin or hook can ever crash a
+  scan cycle or the server*.
+
+Both are enforced continuously: `ruff` static analysis and the full `pytest` suite
+run in [CI](.github/workflows/ci.yml) on Python 3.10, 3.11 and 3.12.
 
 ## Configuration
 

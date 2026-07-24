@@ -50,6 +50,13 @@ class Config:
     auto_refresh_ms: int = 3000
     open_browser: bool = True
 
+    # Map animation
+    animate: bool = True
+    animation_ms: int = 90
+    home_lat: float = 41.0082
+    home_lon: float = 28.9784
+    show_home: bool = True
+
     # Plugins / hooks
     plugins_enabled: bool = True
     enabled_plugins: list[str] = field(default_factory=lambda: ["connection_logger"])
@@ -62,6 +69,9 @@ class Config:
         self.port = int(self.port)
         self.marker_size = max(2, min(30, int(self.marker_size)))
         self.auto_refresh_ms = max(500, int(self.auto_refresh_ms))
+        self.animation_ms = max(30, min(1000, int(self.animation_ms)))
+        self.home_lat = max(-90.0, min(90.0, float(self.home_lat)))
+        self.home_lon = max(-180.0, min(180.0, float(self.home_lon)))
         if self.theme not in THEMES:
             log.warning("Unknown theme %r, falling back to 'midnight'.", self.theme)
             self.theme = "midnight"

@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  desktop:
+    name: Desktop binary (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: reimap-linux-x86_64
+          - os: windows-latest
+            artifact: reimap-windows-x86_64
+          - os: macos-latest
+            artifact: reimap-macos-arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install project + PyInstaller
+        run: |
+          pip install -e .
+          pip install pyinstaller
+      - name: Build binary
+        working-directory: packaging
+        run: pyinstaller reimap.spec --noconfirm
+      - name: Package (tar.gz)
+        shell: bash
+        run: |
+          cd packaging/dist
+          tar -czf "../../${{ matrix.artifact }}.tar.gz" reimap
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}.tar.gz
+          if-no-files-found: error
+
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Build release APK
+        working-directory: android
+        run: gradle assembleRelease --no-daemon
+      - name: Rename APK
+        run: |
+          mkdir -p out
+          cp android/app/build/outputs/apk/release/*.apk out/reimap-android.apk
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reimap-android
+          path: out/reimap-android.apk
+          if-no-files-found: error
+
+  publish:
+    name: Attach to release
+    needs: [desktop, android]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
